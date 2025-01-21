@@ -1,0 +1,6 @@
+accelerate==0.30.0
+bert_score==0.3.13
+peft==0.10.0
+pyarrow==16.0.0
+sentence-transformers==2.7.0
+transformers==4.40.2

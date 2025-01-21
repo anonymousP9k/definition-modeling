@@ -1,0 +1,10 @@
+{
+  "max_definition_character_length": 200,
+  "remove_entries_without_examples": true,
+  "throw_out_definition_markers": [
+    "действие по знач."
+  ],
+  "replace": {
+    "кому-л.": "кому-либо"
+  }
+}

@@ -1,0 +1,101 @@
+[tool.pytest.ini_options]
+markers = [
+    "wiktionary_parser",
+    "model",
+    "vizvector",
+    "rushifteval",
+    "ruscorpora"
+]
+pythonpath = [
+    "wiktionary_parser",
+    "model",
+    "vizvector",
+    "rushifteval",
+    "ruscorpora"
+]
+
+[tool.coverage.run]
+omit = [
+    "*__init__.py",
+    "*_test.py",
+    "/tmp/*",
+    "config.py",
+    "config-3.py"
+]
+
+[tool.coverage.report]
+fail_under=80
+omit = [
+    "*/.cache/*",
+    "*/var/folders/*",
+    "/tmp/*",
+    "config.py",
+    "config-3.py"
+]
+
+[[tool.mypy.overrides]]
+module = ["wiktionary_parser/*", "model/*", "vizvector/*", "rushifteval/*", "ruscorpora/*"]
+disable_error_code = [
+    'import-untyped',
+    'import-not-found'
+]
+
+[tool.mypy]
+exclude = [
+    'venv'
+]
+
+[tool.isort]
+py_version = '311'
+skip_gitignore = true
+line_length = 100
+order_by_type = true
+remove_redundant_aliases = true
+group_by_package = true
+force_alphabetical_sort_within_sections = true
+src_paths = ["wiktionary_parser", "model", "vizvector", "rushifteval", "ruscorpora"]
+
+[tool.pydocstyle]
+convention = 'pep257'
+match-dir = '^(?!(tests|\.)).*'
+add-ignore = [
+    'D104',
+    'D105',
+    'D107'
+]
+
+[tool.flake8]
+max-line-length = 100
+exclude = [
+    'venv*',
+    'build/'
+]
+application_import_names = [
+    'config',
+    'wiktionary_parser',
+    'model',
+    'vizvector',
+    'rushifteval',
+    'ruscorpora'
+]
+select = ['I']
+count = true
+
+[tool.pymarkdown]
+rules = [
+    "md013",
+    "md028",
+    "md033"
+]
+
+[tool.pymarkdown.plugins.md013]
+enabled = true
+line_length = 100
+heading_line_length = 100
+code_block_line_length = 100
+
+[tool.pymarkdown.plugins.md028]
+enabled = false
+
+[tool.pymarkdown.plugins.md033]
+enabled = false
