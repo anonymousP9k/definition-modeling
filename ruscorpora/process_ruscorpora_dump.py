@@ -34,7 +34,7 @@ class ProcessRuscorporaDumpConfig:
     """
 
     epochs: list[Epoch]
-    words: list[str]
+    words: dict[str, list[str]]
     output_file_path: str
 
 
@@ -55,33 +55,40 @@ def load_config(config_path: str) -> ProcessRuscorporaDumpConfig:
                                        output_file_path=config_dict["output_file_path"])
 
 
-def get_word_forms(word: str) -> list[str]:
+def get_word_forms(word: str, allowed_pos: list[str] | None = None) -> list[str]:
     """
-    Generate all possible forms of the word using pymorphy3.
+    Generate all possible forms of the word using pymorphy3, optionally filtered by POS.
 
     :param word: The word to generate forms for.
+    :param allowed_pos: Optional list of allowed POS tags to filter forms.
     :return: List of all possible word forms.
     """
     morph = MorphAnalyzer()
     parsed_word = morph.parse(word)
     forms = set()
+
     for p in parsed_word:
-        forms.update({form.word for form in p.lexeme})
+        for form in p.lexeme:
+            if not allowed_pos or form.tag.POS in allowed_pos:
+                forms.add(form.word)
+
     return list(forms)
 
 
-def process_epochs(words: list[str], epochs: list[Epoch]) -> list[dict]:
+def process_epochs(words: dict[str, list[str]], epochs: list[Epoch]) -> list[dict]:
     """
     Process each epoch for each word, searching sentences and constructing result entries.
 
-    :param words: List of words to search for.
+    :param words: Words to search for.
     :param epochs: List of epoch instances, each containing date and file path.
     :return: List of dictionaries, each representing a found instance with details.
     """
     results = []
     id_counter = 1
 
-    word_forms_dict = {word: get_word_forms(word) for word in words}
+    word_forms_dict = {word: get_word_forms(word, words.get(word, None)) for word in words}
+
+    print(word_forms_dict)
 
     for epoch in epochs:
         print(f"Checking epoch {epoch.date}.")
