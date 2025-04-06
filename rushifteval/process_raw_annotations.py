@@ -83,6 +83,8 @@ def main() -> None:
 
     if dataset_path.is_dir():
         for path in dataset_path.glob("*.tsv"):
+            if path.name.startswith("._"):
+                continue
             dataset = load_tsv_dataset(path)
             dataset_for_inference = prepare_dataset_for_inference(dataset)
             save_as_json(dataset_for_inference, parse_path(f"{output_path}/{path.stem}.jsonl"))

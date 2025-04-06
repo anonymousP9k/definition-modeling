@@ -29,18 +29,18 @@ else
     model_name=$(basename "$lora_file_path")
 fi
 
-python3 model/inference.py "$base_model_name_or_path" $lora_file_path_arg $batch_size \
+python model/inference.py "$base_model_name_or_path" $lora_file_path_arg $batch_size \
     --input-file rushifteval/tmp/for_inference/rusemshift/rusemshift_all_raw_annotations.jsonl \
     --output-file "rushifteval/data/preds/${model_name}_preds/preds_rusemshift_all.jsonl" \
 
-python3 model/inference.py "$base_model_name_or_path" $lora_file_path_arg $batch_size \
+python model/inference.py "$base_model_name_or_path" $lora_file_path_arg $batch_size \
     --input-file rushifteval/tmp/for_inference/rushifteval/rushifteval1_test_raw_annotations.jsonl \
     --output-file "rushifteval/data/preds/${model_name}_preds/preds_rushifteval1_test.jsonl"
 
-python3 model/inference.py "$base_model_name_or_path" $lora_file_path_arg $batch_size \
+python model/inference.py "$base_model_name_or_path" $lora_file_path_arg $batch_size \
     --input-file rushifteval/tmp/for_inference/rushifteval/rushifteval2_test_raw_annotations.jsonl \
     --output-file "rushifteval/data/preds/${model_name}_preds/preds_rushifteval2_test.jsonl"
 
-python3 model/inference.py "$base_model_name_or_path" $lora_file_path_arg $batch_size \
+python model/inference.py "$base_model_name_or_path" $lora_file_path_arg $batch_size \
     --input-file rushifteval/tmp/for_inference/rushifteval/rushifteval3_test_raw_annotations.jsonl \
     --output-file "rushifteval/data/preds/${model_name}_preds/preds_rushifteval3_test.jsonl"
