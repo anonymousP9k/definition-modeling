@@ -1,13 +1,15 @@
 """Process the dump of the Russian National Corpus to extract word usages."""
+import argparse
 import gzip
 import json
+from pathlib import Path
 
 from pydantic.dataclasses import dataclass
 from pymorphy3 import MorphAnalyzer
 from razdel import tokenize
 from tqdm import tqdm
 
-from ruscorpora_utils import parse_path, ROOT_DIR, write_results_to_file
+from ruscorpora_utils import parse_path, write_results_to_file
 
 
 @dataclass
@@ -38,10 +40,7 @@ class ProcessRuscorporaDumpConfig:
     output_file_path: str
 
 
-config_file_path = ROOT_DIR / "ruscorpora" / "process_ruscorpora_config.json"
-
-
-def load_config(config_path: str) -> ProcessRuscorporaDumpConfig:
+def load_config(config_path: str | Path) -> ProcessRuscorporaDumpConfig:
     """
     Load the configuration file.
 
@@ -113,6 +112,12 @@ def process_epochs(words: dict[str, list[str]], epochs: list[Epoch]) -> list[dic
 
 def main() -> None:
     """Process ruscorpora dump to extract word usages."""
+    parser = argparse.ArgumentParser(
+        description="Process the dump of the Russian National Corpus to extract word usages.")
+    parser.add_argument("config_file_path", type=str, help="Path to the configuration file.")
+    args = parser.parse_args()
+
+    config_file_path = parse_path(args.config_file_path)
     config = load_config(config_file_path)
 
     results = process_epochs(config.words, config.epochs)
