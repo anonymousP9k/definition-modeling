@@ -10,17 +10,17 @@ detecting semantic change.
 Download the `data` archive, unpack it and put the contents under `rushifteval` directory:
 [Download](https://github.com/anonymousP9k/definition-modeling/issues/7)
 
-You'll have a `rushifteval/data` folder with `gold`, `rushifteval`, and `rusemshift` folders
+You'll have a `rushifteval/data` folder with `gold` and `rusemshift` folders
 inside.
 
 The meaning of the folders:
 
-- `gold` contains the gold correlation coefficients against which we will check the quality later.
-- `rushifteval` contains the dataset for which we will calculate the coefficient.
+- `gold` contains the gold correlation coefficients of RuShiftEval competition
+against which we will check the quality later.
 - `rusemshift` is a training dataset, e.g. we will use it train models converting distances
 between vectors to the dataset format.
 
-### 2. Process annotations and get definitions
+### 2. Process Ruscorpora, datasets and acquire definitions
 
 > NOTE: Inference takes time.
 > You can skip this step by downloading the archive and
@@ -30,30 +30,50 @@ between vectors to the dataset format.
 > You should get `rushifteval/data/preds/FRED-T5-1.7B-MAS-FN_preds` directory
 > with 4 `.jsonl` files.
 
-#### 2.1 Process annotations
+#### 2.1 Request diachronic RNC
 
-Since we need to get definitions for each sentence pair, we need to run inference on the dataset.
-But before that we must convert the `.tsv` files to `.jsonl` files that `inference.py` can use.
+Request the corpus from Ruscorpora.
+You can read more about it [here](https://ruscorpora.ru/page/corpora-datasets/).
 
-`process_raw_annotations.py` can be run like this:
+The resulting corpus are three files:
+
+- `rnc_post-soviet.txt.gz`
+- `rnc_pre-soviet.txt.gz`
+- `rnc_soviet.txt.gz`
+
+Put them under `ruscorpora/data`.
+
+#### 2.2 Sample usages
+
+To get the usages of the 99 words from the corpora and randomly sample 100 usages
+for each period for each period, run the following script:
 
 ```bash
-python rushifteval/process_raw_annotations.py path_to_the_raw_dataset path_to_the_new_dataset
+bash ruscorpora/bash/sample_test_words_for_rushifteval.sh
 ```
 
-The `path_to_the_raw_dataset` can be either a `.tsv` file or a directory containing such files.
+The resulting files would be under `rushifteval/data/rushifteval`.:
+- `rushifteval1_test.jsonl` - pre-Soviet:Soviet
+- `rushifteval2_test.jsonl` - Soviet:post-Soviet
+- `rushifteval3_test.jsonl` - pre-Soviet:post-Soviet
 
-Run `process_raw_annotations.sh` to run commands needed for `rushifteval` and `rusemeval`:
+These files contain the input texts for each sentence pair for each period pair.
+Later, we will do inference on them to get the corresponding definitions for each entry.
+
+#### 2.3 Processing Rusemshift
+
+We would use the `rusemshift` dataset to train the vectorizer model.
+But before that we must convert the raw `.tsv` files to `.jsonl` files that `inference.py` can use.
+
+Run `process_raw_annotations.py` like this:
 
 ```bash
-bash rushifteval/bash/process_raw_annotations.sh
+python rushifteval/process_raw_annotations.py rushifteval/data/rusemshift rushifteval/tmp/for_inference/rusemshift
 ```
 
-> NOTE: Run the bash-command above to reproduce results.
+#### 2.4 Get definitions
 
-#### 2.2 Get definitions
-
-Now we have the `.jsonl` files that `inference.py` can use.
+Now we have all the `.jsonl` files that `inference.py` can use.
 
 > NOTE: You can read about inference in the [Inference](../../model/docs/Inference.md) module.
 
@@ -151,9 +171,9 @@ normalize the vectors.
 The script will report the results in the following format:
 
 ```text
-Mean correlation: 0.8002271148267935
+Mean correlation: 0.8154433284477015
 Correlations for all epoch pairs:
-pre-Soviet:Soviet: 0.7843978826860809
-Soviet:post-Soviet: 0.8139468755069555
-pre-Soviet:post-Soviet: 0.8023365862873442
+pre-Soviet:Soviet: 0.8065753020477053
+Soviet:post-Soviet: 0.8235272324149309
+pre-Soviet:post-Soviet: 0.816227450880468
 ```
